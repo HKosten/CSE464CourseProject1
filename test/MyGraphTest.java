@@ -100,12 +100,33 @@ public class MyGraphTest {
     }
 
     @Test
-    public  void testAddNodes() throws IOException {
+    public void testAddNodes() throws IOException {
         String[] labels = {"a", "b", "c"};
         myg.addNodes(labels);
 
         myg.outputGraph("Output.dot");
 
         Assertions.assertEquals(Files.readAllLines(Path.of("AddNodesExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testAddEdge() throws IOException {
+        myg.addNode("a");
+        myg.addNode("b");
+
+        myg.addEdge("a", "b");
+
+        myg.outputGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("AddEdgeExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testAddEdgeNoNodes() throws IOException {
+        myg.addEdge("a", "b");
+
+        myg.outputGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("AddEdgeNoNodesExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
     }
 }

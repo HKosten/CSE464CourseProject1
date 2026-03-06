@@ -1,5 +1,6 @@
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
 
@@ -15,7 +16,7 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MyGraph {
-    public guru.nidi.graphviz.model.MutableGraph mutGraph;
+    public MutableGraph mutGraph;
 
     public void parseGraph(String filepath) throws IOException {
         File f = new File(filepath);
@@ -45,6 +46,22 @@ public class MyGraph {
     public void addNodes(String[] labels){
         for(String str : labels){
             addNode(str);
+        }
+    }
+
+    public void addEdge(String srcLabel, String dstLabel){
+        MutableNode srcNode = null;
+        MutableNode dstNode = null;
+        for(MutableNode mn : mutGraph.nodes()){
+            if(mn.name().toString().equals(srcLabel)){
+                srcNode = mn;
+            }
+            if(mn.name().toString().equals(dstLabel)){
+                dstNode = mn;
+            }
+        }
+        if(srcNode != null && dstNode != null) {
+            srcNode.addLink(dstNode);
         }
     }
 
