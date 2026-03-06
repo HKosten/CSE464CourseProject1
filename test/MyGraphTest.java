@@ -129,4 +129,33 @@ public class MyGraphTest {
 
         Assertions.assertEquals(Files.readAllLines(Path.of("AddEdgeNoNodesExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
     }
+
+    @Test
+    public void testOutputDOTGraph() throws IOException {
+        myg.parseGraph("GeneralInput.dot");
+
+        myg.outputDOTGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("GeneralExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testOutputGraphics() throws IOException {
+        myg.parseGraph("GeneralInput.dot");
+
+        myg.outputGraphics("Output", "png");
+
+        Assertions.assertTrue(Files.exists(Path.of("Output.png")));
+    }
+
+    @Test
+    public void testOutputGraphicsExtension() throws IOException {
+        myg.parseGraph("GeneralInput.dot");
+
+        myg.outputGraphics("Output", "png");
+        Path p = Path.of("Output.png");
+        String type = Files.probeContentType(p);
+
+        Assertions.assertEquals("image/png", type);
+    }
 }

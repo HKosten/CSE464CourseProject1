@@ -65,6 +65,16 @@ public class MyGraph {
         }
     }
 
+    public void outputDOTGraph(String path) throws IOException {
+        File f = new File(path);
+        Graphviz.fromGraph(mutGraph).render(Format.DOT).toFile(f);
+    }
+
+    public void outputGraphics(String path, String format) throws IOException {
+        File f = new File(path + "." + format);
+        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f);
+    }
+
     public MyGraph(){
         mutGraph = graph().toMutable().setDirected(true);
     }
