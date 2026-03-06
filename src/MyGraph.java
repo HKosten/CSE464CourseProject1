@@ -1,5 +1,6 @@
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
 
 import java.io.File;
@@ -9,28 +10,45 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import static guru.nidi.graphviz.model.Factory.graph;
+import static guru.nidi.graphviz.model.Factory.mutNode;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MyGraph {
     public guru.nidi.graphviz.model.MutableGraph mutGraph;
 
-    public void parseGraph2(String filepath) throws IOException {
+    public void parseGraph(String filepath) throws IOException {
         File f = new File(filepath);
         Parser p = new Parser();
         mutGraph = p.read(f);
     }
 
-    public String toString2(){
+    public String toString(){
         return mutGraph.toString();
     }
 
-    public void outputGraph2(String filepath) throws IOException {
+    public void outputGraph(String filepath) throws IOException {
         File f = new File(filepath);
         Graphviz.fromGraph(mutGraph).render(Format.DOT).toFile(f);
     }
 
+    public void addNode(String label){
+        for(MutableNode mn : mutGraph.nodes()){
+            if(mn.name().toString().equals(label)){
+                return;
+            }
+        }
+        MutableNode mn = mutNode(label);
+        mutGraph.add(mn);
+    }
+
+    public void addNodes(String[] labels){
+        for(String str : labels){
+            addNode(str);
+        }
+    }
+
     public MyGraph(){
-        mutGraph = graph("My MyGraph").toMutable();
+        mutGraph = graph().toMutable().setDirected(true);
     }
 }
