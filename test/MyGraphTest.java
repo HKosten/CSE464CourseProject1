@@ -206,4 +206,18 @@ public class MyGraphTest {
 
         Assertions.assertEquals("Edge a -> b does not exist", e.getMessage());
     }
+
+    @Test
+    public void testGraphSearch() throws IOException {
+        myg.parseGraph("GeneralInput.dot");
+
+        String[] p = myg.graphSearch("a", "c").p;
+
+        String[] a = new String[16];
+        a[0] = "a";
+        a[1] = "b";
+        a[2] = "c";
+
+        Assertions.assertArrayEquals(a, p);
+    }
 }

@@ -8,6 +8,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.dot.*;
 import org.jgrapht.nio.ImportException;
+import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -118,4 +119,21 @@ public class MyGraph {
         }
         throw new Exception("Edge a -> b does not exist");
     }
+
+    public Path graphSearch(String src, String dst){
+        BreadthFirstIterator<String, DefaultEdge> bfs = new BreadthFirstIterator<>(g, src);
+
+        Path p = new Path();
+
+        for(int i = 0; bfs.hasNext(); i++){
+            String v = bfs.next();
+            p.addNodeAtIndex(v, i);
+            if(v.equals(dst)){
+                return p;
+            }
+        }
+
+        return null;
+    }
 }
+
