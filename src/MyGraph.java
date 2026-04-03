@@ -1,23 +1,19 @@
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
-import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
 import org.jgrapht.*;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.dot.*;
-import org.jgrapht.nio.ImportException;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
+import java.util.Iterator;
 
 import static guru.nidi.graphviz.model.Factory.graph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
@@ -121,13 +117,19 @@ public class MyGraph {
         throw new Exception("Edge a -> b does not exist");
     }
 
-    public Path graphSearch(String src, String dst){
-        DepthFirstIterator<String, DefaultEdge> dfs = new DepthFirstIterator<>(g, src);
+    public Path graphSearch(String src, String dst, Algorithm algo){
+        Iterator<String> a;
+        if(algo == Algorithm.BFS){
+            a = new BreadthFirstIterator<>(g, src);
+        }
+        else {
+            a = new DepthFirstIterator<>(g, src);
+        }
 
         Path p = new Path();
 
-        for(int i = 0; dfs.hasNext(); i++){
-            String v = dfs.next();
+        for(int i = 0; a.hasNext(); i++){
+            String v = a.next();
             p.addNodeAtIndex(v, i);
             if(v.equals(dst)){
                 return p;
