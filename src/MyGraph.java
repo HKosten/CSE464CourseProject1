@@ -9,6 +9,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.dot.*;
 import org.jgrapht.nio.ImportException;
 import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -121,12 +122,12 @@ public class MyGraph {
     }
 
     public Path graphSearch(String src, String dst){
-        BreadthFirstIterator<String, DefaultEdge> bfs = new BreadthFirstIterator<>(g, src);
+        DepthFirstIterator<String, DefaultEdge> dfs = new DepthFirstIterator<>(g, src);
 
         Path p = new Path();
 
-        for(int i = 0; bfs.hasNext(); i++){
-            String v = bfs.next();
+        for(int i = 0; dfs.hasNext(); i++){
+            String v = dfs.next();
             p.addNodeAtIndex(v, i);
             if(v.equals(dst)){
                 return p;
@@ -136,4 +137,3 @@ public class MyGraph {
         return null;
     }
 }
-
