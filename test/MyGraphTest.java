@@ -1,5 +1,9 @@
 import guru.nidi.graphviz.model.*;
 import guru.nidi.graphviz.parse.ParserException;
+import org.jgrapht.Graph;
+import org.jgrapht.nio.*;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
@@ -22,26 +27,21 @@ public class MyGraphTest {
     @Test
     public void testParseGraph() throws IOException {
         //arrange
-        MutableGraph mutg = mutGraph().setDirected(true);
-        MutableNode a = mutNode("a");
-        MutableNode b = mutNode("b");
-        MutableNode c = mutNode("c");
-        MutableNode d = mutNode("d");
+        Graph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        a.addLink(b);
-        b.addLink(c);
-        c.addLink(d);
+        g.addVertex("a");
+        g.addVertex("b");
+        g.addVertex("c");
+        g.addVertex("d");
 
-        mutg.add(a);
-        mutg.add(b);
-        mutg.add(c);
-        mutg.add(d);
-
+        g.addEdge("a", "b");
+        g.addEdge("b", "c");
+        g.addEdge("c", "d");
         //act
         myg.parseGraph("ParseInput.dot");
 
         //assert
-        Assertions.assertEquals(mutg.toString(), myg.mutGraph.toString());
+        Assertions.assertEquals(g.toString(), myg.g.toString());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class MyGraphTest {
 
     @Test
     public void testParseGraphSyntaxError() {
-        Assertions.assertThrows(ParserException.class, () -> {
+        Assertions.assertThrows(ImportException.class, () -> {
             myg.parseGraph("ParseSyntaxErrorInput.dot");
         });
     }
@@ -62,11 +62,7 @@ public class MyGraphTest {
     public void testToString() throws IOException {
         myg.parseGraph("GeneralInput.dot");
 
-        String str = "digraph {\n" +
-                "\"a\" -> \"b\"\n" +
-                "\"b\" -> \"c\"\n" +
-                "\"c\" -> \"d\"\n" +
-                "}";
+        String str = "([a, b, c, d], [(a,b), (b,c), (c,d)])";
 
         Assertions.assertEquals(str, myg.toString());
     }
@@ -157,5 +153,57 @@ public class MyGraphTest {
         String type = Files.probeContentType(p);
 
         Assertions.assertEquals("image/png", type);
+    }
+
+    @Test
+    public void testRemoveNode() throws Exception {
+        myg.parseGraph("GeneralInput.dot");
+
+        myg.removeNode("a");
+
+        myg.outputGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("RemoveNodeExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testRemoveNodeEmpty() throws Exception {
+        Exception e = Assertions.assertThrows(Exception.class, () -> {
+            myg.removeNode("a");
+        });
+
+        Assertions.assertEquals("Node a does not exist", e.getMessage());
+    }
+
+    @Test
+    public void testRemoveNodes() throws Exception {
+        myg.parseGraph("GeneralInput.dot");
+
+        String[] label = {"a", "b"};
+        myg.removeNodes(label);
+
+        myg.outputGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("RemoveNodesExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testRemoveEdge() throws Exception {
+        myg.parseGraph("GeneralInput.dot");
+
+        myg.removeEdge("a", "b");
+
+        myg.outputGraph("Output.dot");
+
+        Assertions.assertEquals(Files.readAllLines(Path.of("RemoveEdgeExpected.dot")), Files.readAllLines(Path.of("Output.dot")));
+    }
+
+    @Test
+    public void testRemoveEdgeEmpty(){
+        Exception e = Assertions.assertThrows(Exception.class, () -> {
+            myg.removeEdge("a", "b");
+        });
+
+        Assertions.assertEquals("Edge a -> b does not exist", e.getMessage());
     }
 }

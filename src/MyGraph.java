@@ -3,7 +3,14 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
+import org.jgrapht.*;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.nio.dot.*;
+import org.jgrapht.nio.ImportException;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,35 +19,38 @@ import java.util.*;
 
 import static guru.nidi.graphviz.model.Factory.graph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
+import static java.lang.module.ModuleDescriptor.read;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MyGraph {
-    public MutableGraph mutGraph;
+    public Graph<String, DefaultEdge> g;
 
     public void parseGraph(String filepath) throws IOException {
-        File f = new File(filepath);
-        Parser p = new Parser();
-        mutGraph = p.read(f);
+        FileReader f = new FileReader(filepath);
+        DOTImporter<String, DefaultEdge> i = new DOTImporter<>();
+        i.setVertexFactory(id -> id);
+        i.setEdgeWithAttributesFactory(e -> new DefaultEdge());
+        i.importGraph(g, f);
     }
 
     public String toString(){
-        return mutGraph.toString();
+        return g.toString();
     }
 
     public void outputGraph(String filepath) throws IOException {
-        File f = new File(filepath);
-        Graphviz.fromGraph(mutGraph).render(Format.DOT).toFile(f);
+        FileWriter f = new FileWriter(filepath);
+        DOTExporter<String, DefaultEdge> e = new DOTExporter<>(v -> v);
+        e.exportGraph(g, f);
     }
 
     public void addNode(String label){
-        for(MutableNode mn : mutGraph.nodes()){
-            if(mn.name().toString().equals(label)){
+        for(String v : g.vertexSet()){
+            if(v.equals(label)){
                 return;
             }
         }
-        MutableNode mn = mutNode(label);
-        mutGraph.add(mn);
+        g.addVertex(label);
     }
 
     public void addNodes(String[] labels){
@@ -50,32 +60,62 @@ public class MyGraph {
     }
 
     public void addEdge(String srcLabel, String dstLabel){
-        MutableNode srcNode = null;
-        MutableNode dstNode = null;
-        for(MutableNode mn : mutGraph.nodes()){
-            if(mn.name().toString().equals(srcLabel)){
-                srcNode = mn;
+        String srcNode = null;
+        String dstNode = null;
+        for(String v : g.vertexSet()){
+            if(v.equals(srcLabel)){
+                srcNode = v;
             }
-            if(mn.name().toString().equals(dstLabel)){
-                dstNode = mn;
+            if(v.equals(dstLabel)){
+                dstNode = v;
             }
         }
         if(srcNode != null && dstNode != null) {
-            srcNode.addLink(dstNode);
+            g.addEdge(srcLabel, dstLabel);
         }
     }
 
     public void outputDOTGraph(String path) throws IOException {
-        File f = new File(path);
-        Graphviz.fromGraph(mutGraph).render(Format.DOT).toFile(f);
+        FileWriter f = new FileWriter(path);
+        DOTExporter<String, DefaultEdge> e = new DOTExporter<>(v -> v);
+        e.exportGraph(g, f);
     }
 
     public void outputGraphics(String path, String format) throws IOException {
-        File f = new File(path + "." + format);
-        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f);
+        outputDOTGraph("temp.dot");
+        File f1 = new File("temp.dot");
+        Parser p = new Parser();
+        MutableGraph mutGraph = p.read(f1);
+        File f2 = new File(path + "." + format);
+        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f2);
     }
 
     public MyGraph(){
-        mutGraph = graph().toMutable().setDirected(true);
+        g = new DefaultDirectedGraph<>(DefaultEdge.class);
+    }
+
+    public void removeNode(String label) throws Exception {
+        if(g.vertexSet().contains(label)){
+            g.removeVertex(label);
+        }
+        else {
+            throw new Exception("Node " + label + " does not exist");
+        }
+    }
+
+    public void removeNodes(String[] labels) throws Exception {
+        for(String s : labels){
+            removeNode(s);
+        }
+    }
+
+    public void removeEdge(String srcLabel, String dstLabel) throws Exception {
+        for (DefaultEdge edge : g.edgeSet()) {
+            if (g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel)) {
+                g.removeEdge(edge);
+                return;
+            }
+        }
+        throw new Exception("Edge a -> b does not exist");
     }
 }

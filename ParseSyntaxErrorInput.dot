@@ -1,3 +1,4 @@
-digrap {
+digraph
     a -> b
+    gh%034
 }

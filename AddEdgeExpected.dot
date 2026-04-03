@@ -1,3 +1,5 @@
-digraph {
-"a" -> "b"
+strict digraph G {
+  a;
+  b;
+  a -> b;
 }

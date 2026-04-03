@@ -7,6 +7,7 @@
     <groupId>asu-cse-464</groupId>
     <artifactId>CSE464CourseProject1</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>CSE464CourseProject1</name>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
@@ -24,6 +25,18 @@
             <groupId>guru.nidi</groupId>
             <artifactId>graphviz-java</artifactId>
             <version>0.18.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-io</artifactId>
+            <version>1.5.2</version>
         </dependency>
 
         <dependency>

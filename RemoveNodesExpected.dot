@@ -1,2 +1,5 @@
 strict digraph G {
+  c;
+  d;
+  c -> d;
 }
