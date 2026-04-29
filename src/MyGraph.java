@@ -51,7 +51,7 @@ public class MyGraph {
         g.addVertex(label);
     }
 
-    public void addNodes(String[] labels){
+    public void addListOfNodes(String[] labels){
         for(String str : labels){
             addNode(str);
         }
@@ -101,7 +101,7 @@ public class MyGraph {
         }
     }
 
-    public void removeNodes(String[] labels) throws Exception {
+    public void removeListOfNodes(String[] labels) throws Exception {
         for(String s : labels){
             removeNode(s);
         }

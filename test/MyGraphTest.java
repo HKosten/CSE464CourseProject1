@@ -98,7 +98,7 @@ public class MyGraphTest {
     @Test
     public void testAddNodes() throws IOException {
         String[] labels = {"a", "b", "c"};
-        myg.addNodes(labels);
+        myg.addListOfNodes(labels);
 
         myg.outputGraph("Output.dot");
 
@@ -180,7 +180,7 @@ public class MyGraphTest {
         myg.parseGraph("GeneralInput.dot");
 
         String[] label = {"a", "b"};
-        myg.removeNodes(label);
+        myg.removeListOfNodes(label);
 
         myg.outputGraph("Output.dot");
 
