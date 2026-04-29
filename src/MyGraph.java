@@ -22,7 +22,7 @@ import static java.lang.module.ModuleDescriptor.read;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MyGraph {
-    public Graph<String, DefaultEdge> g;
+    public Graph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);;
 
     public void parseGraph(String filepath) throws IOException {
         FileReader f = new FileReader(filepath);
@@ -92,10 +92,6 @@ public class MyGraph {
         MutableGraph mutGraph = p.read(f1);
         File f2 = new File(path + "." + format);
         Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f2);
-    }
-
-    public MyGraph(){
-        g = new DefaultDirectedGraph<>(DefaultEdge.class);
     }
 
     public void removeNode(String label) throws Exception {
