@@ -88,10 +88,14 @@ public class MyGraph {
     public void outputGraphics(String path, String format) throws IOException {
         outputDOTGraph("temp.dot");
         File f1 = new File("temp.dot");
-        Parser p = new Parser();
-        MutableGraph mutGraph = p.read(f1);
         File f2 = new File(path + "." + format);
-        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f2);
+        executeOutput(f1, f2);
+    }
+
+    public void executeOutput(File input, File output) throws IOException {
+        Parser p = new Parser();
+        MutableGraph mutGraph = p.read(input);
+        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(output);
     }
 
     public void removeNode(String label) throws Exception {
