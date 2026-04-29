@@ -26,10 +26,16 @@ public class MyGraph {
 
     public void parseGraph(String filepath) throws IOException {
         FileReader f = new FileReader(filepath);
+
         DOTImporter<String, DefaultEdge> i = new DOTImporter<>();
+        setupImporter(i);
+
+        i.importGraph(g, f);
+    }
+
+    public void setupImporter(DOTImporter<String, DefaultEdge> i){
         i.setVertexFactory(id -> id);
         i.setEdgeWithAttributesFactory(e -> new DefaultEdge());
-        i.importGraph(g, f);
     }
 
     public String toString(){
