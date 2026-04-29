@@ -109,12 +109,16 @@ public class MyGraph {
 
     public void removeEdge(String srcLabel, String dstLabel) throws Exception {
         for (DefaultEdge edge : g.edgeSet()) {
-            if (g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel)) {
+            if (edgeHasSrcAndDst(edge, srcLabel, dstLabel)) {
                 g.removeEdge(edge);
                 return;
             }
         }
         throw new Exception("Edge a -> b does not exist");
+    }
+
+    public boolean edgeHasSrcAndDst(DefaultEdge edge, String srcLabel, String dstLabel){
+        return g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel);
     }
 
     public Path graphSearch(String src, String dst, Algorithm algo){
