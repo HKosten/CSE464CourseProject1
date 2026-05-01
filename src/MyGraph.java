@@ -21,7 +21,7 @@ import static java.lang.module.ModuleDescriptor.read;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class MyGraph {
+public abstract class MyGraph {
     public Graph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);;
 
     public void parseGraph(String filepath) throws IOException {
@@ -127,17 +127,17 @@ public class MyGraph {
         return g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel);
     }
 
-    public Path graphSearch(String src, String dst, Algorithm algo){
-        Iterator<String> a;
-        if(algo == Algorithm.BFS){
-            a = new BreadthFirstIterator<>(g, src);
-        }
-        else {
-            a = new DepthFirstIterator<>(g, src);
-        }
+    public final Path graphSearch(String src, String dst){
+        Iterator<String> a = null;
+        a = iteratorAlg(src);
 
         Path p = new Path();
+        return tracePath(a, p, dst);
+    }
 
+    abstract Iterator<String> iteratorAlg(String src);
+
+    public Path tracePath(Iterator<String> a, Path p, String dst){
         for(int i = 0; a.hasNext(); i++){
             String v = a.next();
             p.addNodeAtIndex(v, i);
@@ -145,7 +145,6 @@ public class MyGraph {
                 return p;
             }
         }
-
         return null;
     }
 }
