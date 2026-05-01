@@ -1,3 +1,3 @@
 public enum Algorithm {
-    BFS, DFS
+    BFS, DFS, RWS
 }

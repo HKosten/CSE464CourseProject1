@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static guru.nidi.graphviz.model.Factory.graph;
@@ -140,6 +141,7 @@ public class MyGraph {
         for(int i = 0; a.hasNext(); i++){
             String v = a.next();
             p.addNodeAtIndex(v, i);
+            printPath(p);
             if(v.equals(dst)){
                 return p;
             }
@@ -154,5 +156,21 @@ public class MyGraph {
         if(algo == Algorithm.DFS){
             this.ss = new DFS();
         }
+        if(algo == Algorithm.RWS){
+            this.ss = new RWS();
+        }
+    }
+
+    public void printPath(Path path){
+        System.out.print("visiting Path{nodes=[");
+        for(int i = 0; i < path.length; i++){
+            System.out.print("Node{");
+            System.out.print(path.p[i]);
+            System.out.print("}");
+            if(i != path.length-1){
+                System.out.print(", ");
+            }
+        }
+        System.out.print("]} ");
     }
 }
