@@ -3,6 +3,6 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Iterator;
 
-public interface SearchStrategy{
-    public Iterator<String> iteratorAlg(Graph<String, DefaultEdge> g, String src);
+public abstract class SearchStrategy{
+    public abstract Iterator<String> iteratorAlg(Graph<String, DefaultEdge> g, String src);
 }
