@@ -21,7 +21,7 @@ public class MyGraphTest {
 
     @BeforeEach
     public void setup(){
-        myg = new DFS();
+        myg = new MyGraph();
     }
 
     @Test
@@ -209,10 +209,9 @@ public class MyGraphTest {
 
     @Test
     public void testGraphSearchBFS() throws IOException {
-        BFS BFSg = new BFS();
-        BFSg.parseGraph("GeneralInput.dot");
+        myg.parseGraph("GeneralInput.dot");
 
-        String[] p = BFSg.graphSearch("a", "c").p;
+        String[] p = myg.graphSearch("a", "c", Algorithm.BFS).p;
 
         String[] a = new String[16];
         a[0] = "a";
@@ -226,7 +225,7 @@ public class MyGraphTest {
     public void testGraphSearchDFS() throws IOException {
         myg.parseGraph("GeneralInput.dot");
 
-        String[] p = myg.graphSearch("a", "c").p;
+        String[] p = myg.graphSearch("a", "c", Algorithm.DFS).p;
 
         String[] a = new String[16];
         a[0] = "a";
