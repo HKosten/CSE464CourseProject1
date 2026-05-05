@@ -134,19 +134,7 @@ public class MyGraph {
         a = ss.iteratorAlg(g, src);
 
         Path p = new Path();
-        return tracePath(a, p, dst);
-    }
-
-    public Path tracePath(Iterator<String> a, Path p, String dst){
-        for(int i = 0; a.hasNext(); i++){
-            String v = a.next();
-            p.addNodeAtIndex(v, i);
-            printPath(p);
-            if(v.equals(dst)){
-                return p;
-            }
-        }
-        return null;
+        return ss.tracePath(a, p, dst);
     }
 
     public void setSearchStrategy(Algorithm algo){
@@ -159,18 +147,5 @@ public class MyGraph {
         if(algo == Algorithm.RWS){
             this.ss = new RWS();
         }
-    }
-
-    public void printPath(Path path){
-        System.out.print("visiting Path{nodes=[");
-        for(int i = 0; i < path.length; i++){
-            System.out.print("Node{");
-            System.out.print(path.p[i]);
-            System.out.print("}");
-            if(i != path.length-1){
-                System.out.print(", ");
-            }
-        }
-        System.out.print("]} ");
     }
 }

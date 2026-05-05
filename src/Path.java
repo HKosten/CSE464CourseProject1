@@ -24,4 +24,17 @@ public class Path {
         p = t;
         capacity = capacity * 2;
     }
+
+    public void printPath(){
+        System.out.print("visiting Path{nodes=[");
+        for(int i = 0; i < this.length; i++){
+            System.out.print("Node{");
+            System.out.print(this.p[i]);
+            System.out.print("}");
+            if(i != this.length-1){
+                System.out.print(", ");
+            }
+        }
+        System.out.print("]} ");
+    }
 }
