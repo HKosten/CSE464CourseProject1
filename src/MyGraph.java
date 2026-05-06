@@ -6,13 +6,12 @@ import org.jgrapht.*;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.dot.*;
-import org.jgrapht.traverse.BreadthFirstIterator;
-import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static guru.nidi.graphviz.model.Factory.graph;
@@ -22,14 +21,21 @@ import static java.lang.module.ModuleDescriptor.read;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MyGraph {
-    public Graph<String, DefaultEdge> g;
+    public Graph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+    SearchStrategy ss;
 
     public void parseGraph(String filepath) throws IOException {
         FileReader f = new FileReader(filepath);
+
         DOTImporter<String, DefaultEdge> i = new DOTImporter<>();
+        setupImporter(i);
+
+        i.importGraph(g, f);
+    }
+
+    public void setupImporter(DOTImporter<String, DefaultEdge> i){
         i.setVertexFactory(id -> id);
         i.setEdgeWithAttributesFactory(e -> new DefaultEdge());
-        i.importGraph(g, f);
     }
 
     public String toString(){
@@ -51,7 +57,7 @@ public class MyGraph {
         g.addVertex(label);
     }
 
-    public void addNodes(String[] labels){
+    public void addListOfNodes(String[] labels){
         for(String str : labels){
             addNode(str);
         }
@@ -82,14 +88,14 @@ public class MyGraph {
     public void outputGraphics(String path, String format) throws IOException {
         outputDOTGraph("temp.dot");
         File f1 = new File("temp.dot");
-        Parser p = new Parser();
-        MutableGraph mutGraph = p.read(f1);
         File f2 = new File(path + "." + format);
-        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(f2);
+        executeOutput(f1, f2);
     }
 
-    public MyGraph(){
-        g = new DefaultDirectedGraph<>(DefaultEdge.class);
+    public void executeOutput(File input, File output) throws IOException {
+        Parser p = new Parser();
+        MutableGraph mutGraph = p.read(input);
+        Graphviz.fromGraph(mutGraph).render(Format.PNG).toFile(output);
     }
 
     public void removeNode(String label) throws Exception {
@@ -101,7 +107,7 @@ public class MyGraph {
         }
     }
 
-    public void removeNodes(String[] labels) throws Exception {
+    public void removeListOfNodes(String[] labels) throws Exception {
         for(String s : labels){
             removeNode(s);
         }
@@ -109,7 +115,7 @@ public class MyGraph {
 
     public void removeEdge(String srcLabel, String dstLabel) throws Exception {
         for (DefaultEdge edge : g.edgeSet()) {
-            if (g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel)) {
+            if (edgeHasSrcAndDst(edge, srcLabel, dstLabel)) {
                 g.removeEdge(edge);
                 return;
             }
@@ -117,25 +123,29 @@ public class MyGraph {
         throw new Exception("Edge a -> b does not exist");
     }
 
-    public Path graphSearch(String src, String dst, Algorithm algo){
-        Iterator<String> a;
-        if(algo == Algorithm.BFS){
-            a = new BreadthFirstIterator<>(g, src);
-        }
-        else {
-            a = new DepthFirstIterator<>(g, src);
-        }
+    public boolean edgeHasSrcAndDst(DefaultEdge edge, String srcLabel, String dstLabel){
+        return g.getEdgeSource(edge).equals(srcLabel) && g.getEdgeTarget(edge).equals(dstLabel);
+    }
+
+    public final Path graphSearch(String src, String dst, Algorithm algo){
+        setSearchStrategy(algo);
+
+        Iterator<String> a = null;
+        a = ss.iteratorAlg(g, src);
 
         Path p = new Path();
+        return ss.tracePath(a, p, dst);
+    }
 
-        for(int i = 0; a.hasNext(); i++){
-            String v = a.next();
-            p.addNodeAtIndex(v, i);
-            if(v.equals(dst)){
-                return p;
-            }
+    public void setSearchStrategy(Algorithm algo){
+        if(algo == Algorithm.BFS){
+            this.ss = new BFS();
         }
-
-        return null;
+        if(algo == Algorithm.DFS){
+            this.ss = new DFS();
+        }
+        if(algo == Algorithm.RWS){
+            this.ss = new RWS();
+        }
     }
 }
